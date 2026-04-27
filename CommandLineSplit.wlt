@@ -1,3 +1,4 @@
+scan = Import[FileNameJoin[DirectoryName @ $TestFileName, "CommandLineSplit.compiled.wl"], "WL"];
 Get @ FileNameJoin[DirectoryName @ $TestFileName, "CommandLineSplit.wl"];
 
 (* Basic splitting *)
@@ -241,5 +242,21 @@ VerificationTest[
 	_Failure,
 	{CommandLineSplit::uesc},
 	TestID -> "UnterminatedCustomEscape",
+	SameTest -> MatchQ
+]
+
+VerificationTest[
+	CommandLineSplit["cmd -f; cmd2"],
+	{{"cmd", "-f"}, ";", {"cmd2"}},
+	{},
+	TestID -> "MultiCommandSimple",
+	SameTest -> MatchQ
+]
+
+VerificationTest[
+	CommandLineSplit["cmd; cmd2 \"\\;\\&\""],
+	{{"cmd"}, ";", {"cmd2", "\\;\\&"}},
+	{},
+	TestID -> "MultiCommandWithQuotesAndEscapes",
 	SameTest -> MatchQ
 ]
